@@ -35,6 +35,12 @@ kobweb {
                 }
             }
         }
+        server {
+            remoteDebugging {
+                enabled.set(true)
+                port.set(5005)
+            }
+        }
     }
 }
 

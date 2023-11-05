@@ -24,7 +24,7 @@ import org.w3c.dom.set
 import kotlin.js.Date
 
 @Composable
-fun isUserLoggedIn(content: @Composable () -> Unit) {
+fun isUserLoggedIn(content: @Composable () -> Unit) { // 'content' refers more or less to the web-site
     val context = rememberPageContext()
     val remembered = remember { localStorage["remember"].toBoolean() }
     val userId = remember { localStorage["userId"] }

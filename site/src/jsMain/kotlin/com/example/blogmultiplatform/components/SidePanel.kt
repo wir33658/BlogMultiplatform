@@ -83,10 +83,10 @@ private fun SidePanelInternal() {
         modifier = Modifier
             .padding(leftRight = 40.px, topBottom = 50.px)
             .width(SIDE_PANEL_WIDTH.px)
-            .height(100.vh)
+            .height(100.vh) // this means the complete height of the view port is taken (100 %)
             .position(Position.Fixed)
             .backgroundColor(Theme.Secondary.rgb)
-            .zIndex(9)
+            .zIndex(9) // is the z-axis, the one going into the screen, so 9 means that it is in front of anything else
     ) {
         Image(
             modifier = Modifier.margin(bottom = 60.px),

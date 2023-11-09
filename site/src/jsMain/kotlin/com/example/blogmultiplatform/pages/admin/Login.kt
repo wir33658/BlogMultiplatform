@@ -142,7 +142,7 @@ fun LoginScreen() {
                 type = InputType.Password,
                 attrs = LoginInputStyle.toModifier()
                     .onKeyDown {
-                        if(it.key == "Enter"){
+                        if(it.key == "Enter"){ // && it.shiftKey){
                             doLogin()
                         }
                     }

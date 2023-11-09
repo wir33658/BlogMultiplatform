@@ -38,6 +38,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.height
 import com.varabyte.kobweb.compose.ui.modifiers.id
 import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
+import com.varabyte.kobweb.compose.ui.modifiers.onKeyDown
 import com.varabyte.kobweb.compose.ui.modifiers.outline
 import com.varabyte.kobweb.compose.ui.modifiers.padding
 import com.varabyte.kobweb.compose.ui.modifiers.textAlign
@@ -57,6 +58,7 @@ import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Input
 import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.events.KeyboardEvent
 import org.w3c.dom.set
 
 @Page
@@ -65,6 +67,35 @@ fun LoginScreen() {
     val scope = rememberCoroutineScope()
     val context = rememberPageContext()
     var errorText by remember { mutableStateOf(" ") }
+
+    fun doLogin(){
+        scope.launch {
+            val username =
+                (document.getElementById(Id.usernameInput) as HTMLInputElement).value
+            val password =
+                (document.getElementById(Id.passwordInput) as HTMLInputElement).value
+            if (username.isNotEmpty() && password.isNotEmpty()) {
+                val user = checkUserExistence(
+                    user = User(
+                        username = username,
+                        password = password
+                    )
+                )
+                if (user != null) {
+                    rememberLoggedIn(remember = true, user = user)
+                    context.router.navigateTo(Screen.AdminHome.route)
+                } else {
+                    errorText = "The user doesn't exist."
+                    delay(3000)
+                    errorText = " "
+                }
+            } else {
+                errorText = "Input fields are empty."
+                delay(3000)
+                errorText = " "
+            }
+        }
+    }
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -87,6 +118,9 @@ fun LoginScreen() {
             Input(
                 type = InputType.Text,
                 attrs = LoginInputStyle.toModifier()
+                    .onKeyDown {
+                        if(it.key == "Enter")println("ENTER")  // prints on console in browser
+                    }
                     .id(Id.usernameInput)
                     .margin(bottom = 12.px)
                     .width(350.px)
@@ -107,6 +141,11 @@ fun LoginScreen() {
             Input(
                 type = InputType.Password,
                 attrs = LoginInputStyle.toModifier()
+                    .onKeyDown {
+                        if(it.key == "Enter"){
+                            doLogin()
+                        }
+                    }
                     .id(Id.passwordInput)
                     .margin(bottom = 20.px)
                     .width(350.px)
@@ -138,32 +177,7 @@ fun LoginScreen() {
                     .noBorder()
                     .cursor(Cursor.Pointer)
                     .onClick {
-                        scope.launch {
-                            val username =
-                                (document.getElementById(Id.usernameInput) as HTMLInputElement).value
-                            val password =
-                                (document.getElementById(Id.passwordInput) as HTMLInputElement).value
-                            if (username.isNotEmpty() && password.isNotEmpty()) {
-                                val user = checkUserExistence(
-                                    user = User(
-                                        username = username,
-                                        password = password
-                                    )
-                                )
-                                if (user != null) {
-                                    rememberLoggedIn(remember = true, user = user)
-                                    context.router.navigateTo(Screen.AdminHome.route)
-                                } else {
-                                    errorText = "The user doesn't exist."
-                                    delay(3000)
-                                    errorText = " "
-                                }
-                            } else {
-                                errorText = "Input fields are empty."
-                                delay(3000)
-                                errorText = " "
-                            }
-                        }
+                        doLogin()
                     }
                     .toAttrs()
             ) {
